@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ru.mtsbank.service</groupId>
+	<version>0.1-SNAPSHOT</version>
+	<artifactId>download-maven-deps</artifactId>
+	<packaging>jar</packaging>
+
+	<repositories>
+	  <repository>
+		<id>http://download.java.net/maven/glassfish</id>
+		<url>http://download.java.net/maven/glassfish</url>
+	  </repository>
+	  <repository>
+		<id>http://central.maven.org/maven2</id>
+		<url>http://central.maven.org/maven2</url>
+	  </repository>
+	  <repository>
+		<id>http://repo.maven.apache.org/maven2</id>
+		<url>http://repo.maven.apache.org/maven2</url>
+	  </repository>
+	  <repository>
+		<id>http://mirrors.ibiblio.org/pub/mirrors/maven</id>
+		<url>http://mirrors.ibiblio.org/pub/mirrors/maven</url>
+	  </repository>
+
+	  <repository>
+		<id>http://maven.java.net/content/groups/promoted</id>
+		<url>http://maven.java.net/content/groups/promoted</url>
+	  </repository>	  
+		<repository>
+			<id>http://repository.jboss.org/nexus/content/groups/public</id>
+			<url>http://repository.jboss.org/nexus/content/groups/public</url>
+		</repository>	  	  
+	</repositories>
+
+  <dependencies>
+
+		<dependency>
+			<groupId>org.glassfish.main.extras</groupId>
+			<artifactId>glassfish-embedded-all</artifactId>
+			<version>4.1.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+		
+</project>		
+		

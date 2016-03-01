@@ -1,0 +1,41 @@
+// mvn verify  -f download-deps.pom
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+group = 'com.javaeehandbook.book1'
+archivesBaseName = 'ch06-servlets-basic'
+version = '1.0'
+
+repositories {
+ maven { url "c:/home/topchy/.m2" }
+ //mavenCentral()
+ //maven { url 'https://maven.java.net/content/groups/promoted' }
+ //maven { url 'http://repository.jboss.org/nexus/content/groups/public' }
+}
+
+dependencies {
+ compile 'org.glassfish.main.extras:glassfish-embedded-all:4.1.1'
+ compile 'javax:javaee-api:7.0' // -b72
+ testCompile 'junit:junit:4.10'
+}
+
+// Override Gradle defaults - a force an exploded JAR view
+sourceSets {
+ main {
+   output.resourcesDir = 'build/classes/main'
+   output.classesDir = 'build/classes/main'
+ }
+ test {
+   output.resourcesDir = 'build/classes/test'
+   output.classesDir = 'build/classes/test'
+ }
+}
+
+task(run, dependsOn: 'classes', type: JavaExec) {
+ description = 'Runs the main application'
+ main = 'je7hb.common.webcontainer.embedded.glassfish.EmbeddedRunner'
+ classpath = sourceSets.main.runtimeClasspath
+}
