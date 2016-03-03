@@ -1,41 +1,151 @@
-// mvn verify  -f download-deps.pom
-
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'eclipse'
+apply plugin: 'war'
 apply plugin: 'idea'
 
-group = 'com.javaeehandbook.book1'
-archivesBaseName = 'ch06-servlets-basic'
-version = '1.0'
+version = '1.0-SNAPSHOT'
+
+ext.libraryVersions = [
+    arquillian: '1.1.3.Final',
+    arquillian_glassfish: '1.0.0.CR4',
+    bootstrap: '3.0.0',
+    glassfish: '4.0',
+    gson: '2.2.4',
+    hamcrest: '1.2',
+    javaee: '7.0',
+    //jbossAS7: '7.1.1.Final',
+    //jbossJavaeeSpec: '1.0.0.Final',
+    jquery: '1.10.2',
+    junit: '4.11',
+    postgresql: '9.2-1003-jdbc4',
+    shrinkwrapDesc: '2.0.0-alpha-3'
+]
 
 repositories {
- maven { url "c:/home/topchy/.m2" }
- //mavenCentral()
- //maven { url 'https://maven.java.net/content/groups/promoted' }
- //maven { url 'http://repository.jboss.org/nexus/content/groups/public' }
+	maven { url 'http://central.maven.org/maven2' }
+    mavenCentral()
+    mavenLocal()
+    maven { url 'http://repository.jboss.org/nexus/content/groups/public' }
+    maven { url 'http://repository.jboss.org/nexus/content/repositories/deprecated' }
+}
+
+configurations {
+    provided
+
+    //jbossAS7ManagedTestRuntime { extendsFrom testRuntime, provided }
+    glassfishEmbeddedTestRuntime { extendsFrom testRuntime }
+    //glassfishManagedTestRuntime { extendsFrom testRuntime }
+    //glassfishRemoteTestRuntime { extendsFrom testRuntime }
+}
+
+sourceSets {
+	
+    main {
+	   java {
+		  srcDir 'src/main/java'
+		}
+		compileClasspath += configurations.provided	
+	}
+    test {
+    	compileClasspath += main.output + configurations.provided + main.compileClasspath
+		runtimeClasspath += main.output + configurations.provided + main.compileClasspath + main.runtimeClasspath
+		java {
+		  srcDir 'src/test/java'
+		}		
+	}
 }
 
 dependencies {
- compile 'org.glassfish.main.extras:glassfish-embedded-all:4.1.1'
- compile 'javax:javaee-api:7.0' // -b72
- testCompile 'junit:junit:4.10'
+    compile "javax:javaee-api:$libraryVersions.javaee"
+    compile "org.webjars:bootstrap:$libraryVersions.bootstrap"
+    compile "org.webjars:jquery:$libraryVersions.jquery"
+    compile "org.webjars:jquery-ui:$libraryVersions.jquery"
+    compile "com.google.code.gson:gson:$libraryVersions.gson"
+    
+    compile "org.hsqldb:hsqldb:2.2.8"
+
+    testCompile "junit:junit:$libraryVersions.junit"
+    testCompile "org.hamcrest:hamcrest-core:$libraryVersions.hamcrest"
+
+    testCompile "org.jboss.arquillian.junit:arquillian-junit-container:$libraryVersions.arquillian"
+    testCompile "org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:$libraryVersions.shrinkwrapDesc"
+    testCompile "org.glassfish.jersey.core:jersey-client:2.2"
+    testCompile "org.jboss.arquillian:arquillian-bom:1.1.1.Final"
+    //testCompile "org.jboss.arquillian.extension:arquillian-drone-bom:1.2.0.Beta1"
+    //testCompile "org.jboss.arquillian.selenium:selenium-bom:2.35.0"
+    //testCompile "org.jboss.arquillian.graphene:graphene-webdriver:2.0.0.Beta1"
+
+    testRuntime "org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-javaee:$libraryVersions.shrinkwrapDesc"
+    //testRuntime "org.hsqldb:hsqldb:2.0.0"
+    //testRuntime "org.postgresql:postgresql:9.2-1003-jdbc4"
+    testRuntime "org.codehaus.jackson:jackson-mapper-asl:1.9.13"
+
+    //jbossAS7ManagedTestRuntime "org.jboss.as:jboss-as-arquillian-container-managed:$libraryVersions.jbossAS7"
+    //jbossAS7ManagedTestRuntime "org.jboss.spec:jboss-javaee-6.0:$libraryVersions.jbossJavaeeSpec"
+
+    glassfishEmbeddedTestRuntime "org.jboss.arquillian.container:arquillian-glassfish-embedded-3.1:$libraryVersions.arquillian_glassfish"
+    glassfishEmbeddedTestRuntime "org.glassfish.main.extras:glassfish-embedded-all:$libraryVersions.glassfish"
+
+    //glassfishManagedTestRuntime "org.jboss.arquillian.container:arquillian-glassfish-managed-3.1:$libraryVersions.arquillian_glassfish"
+
+    //glassfishRemoteTestRuntime "org.jboss.arquillian.container:arquillian-glassfish-remote-3.1:$libraryVersions.arquillian_glassfish"
 }
 
-// Override Gradle defaults - a force an exploded JAR view
-sourceSets {
- main {
-   output.resourcesDir = 'build/classes/main'
-   output.classesDir = 'build/classes/main'
- }
- test {
-   output.resourcesDir = 'build/classes/test'
-   output.classesDir = 'build/classes/test'
- }
+test {
+    useJUnit {
+        excludeCategories 'com.steeplesoft.frenchpress.test.IntegrationTests'
+    }
+    testLogging.showStandardStreams = true
 }
 
-task(run, dependsOn: 'classes', type: JavaExec) {
- description = 'Runs the main application'
- main = 'je7hb.common.webcontainer.embedded.glassfish.EmbeddedRunner'
- classpath = sourceSets.main.runtimeClasspath
+// task jbossAS7ManagedTest(type: Test)
+// jbossAS7ManagedTest {    systemProperty 'arquillian.launch', "jbossas-managed-7" }
+
+task glassfishEmbeddedTest(type: Test) { systemProperty 'arquillian.launch', "glassfish-embedded" }
+
+//task glassfishManagedTest(type: Test) { systemProperty 'arquillian.launch', "glassfish-managed" }
+
+//task glassfishRemoteTest(type: Test) {systemProperty 'arquillian.launch', "glassfish-remote"}
+
+tasks.withType(Test).matching({ t-> t.name.endsWith('Test') } as Spec).each { t ->
+    if (System.getProperty('test.debug', 'false') == 'true') {
+        t.jvmArgs '-Xdebug',
+                '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
+    }
+    if (System.getProperty('test.single', '') != '') {
+        t.includes = [System.getProperty('test.single')]
+    }
+    t.testLogging.showStandardStreams = true
+    t.testClassesDir = project.sourceSets.test.output.classesDir
+    t.classpath = project.configurations.getByName(t.name + 'Runtime') +
+    project.sourceSets.main.output +
+    project.sourceSets.test.output
+    if (t.name.startsWith('jbossas')) {
+        t.classpath += files('src/test/resources-jbossas')
+    }
 }
+
+war.doLast {
+    ant.unzip(src: war.archivePath, dest: "$buildDir/exploded")
+}
+
+/*
+def getCkEditor() {
+    if (!file( "src/main/webapp/js/ckeditor").exists() ) {
+        ant.get(src: 'http://download.cksource.com/CKEditor/CKEditor/CKEditor%204.2/ckeditor_4.2_standard.zip',
+            dest : "$buildDir/dependency-cache/",
+            usetimestamp : true,
+            verbose:true)
+        ant.unzip(src:"$buildDir/dependency-cache/ckeditor_4.2_standard.zip",
+            dest: "src/main/webapp/js")
+    }
+} 
+
+task cleanExtra(type: Delete) {
+    delete 'src/main/webapp/js/ckeditor'
+}
+
+compileJava << {
+    getCkEditor()
+}
+
+
+clean.dependsOn cleanExtra */

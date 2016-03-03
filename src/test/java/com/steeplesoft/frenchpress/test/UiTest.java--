@@ -1,0 +1,70 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.steeplesoft.frenchpress.test;
+
+import com.steeplesoft.frenchpress.test.pages.IndexPage;
+import com.steeplesoft.frenchpress.test.pages.PostPage;
+import java.net.URL;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.drone.api.annotation.Drone;
+import org.jboss.arquillian.graphene.page.InitialPage;
+import org.jboss.arquillian.graphene.page.Page;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.GenericArchive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.importer.ExplodedImporter;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+/**
+ *
+ * @author jdlee
+ */
+@RunWith(Arquillian.class)
+@Category(IntegrationTests.class)
+public class UiTest {
+    private static final String WEBAPP_SRC = "src/main/webapp";
+
+    @Drone
+    private WebDriver browser;
+    @ArquillianResource
+    private URL deploymentUrl;
+
+    @Page
+    private IndexPage indexPage;
+    @Page
+    private PostPage postPage;
+
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        return ShrinkWrap.create(WebArchive.class)
+                .addPackages(true, "com.steeplesoft.frenchpress")
+                .merge(ShrinkWrap.create(GenericArchive.class).as(ExplodedImporter.class)
+                        .importDirectory(WEBAPP_SRC).as(GenericArchive.class),
+                        "/")
+                .addAsResource("persistence.xml", "META-INF/persistence.xml")
+                .addAsWebInfResource(new StringAsset("<faces-config version=\"2.0\"/>"), "faces-config.xml");
+    }
+
+    @Test
+    public void lookForIntro(/*@InitialPage IndexPage indexPage*/) {
+        browser.get(deploymentUrl + "/index.jsf");
+        WebElement link = browser.findElement(By.linkText("Test Post #1"));
+        Assert.assertNotNull(link);
+        Assert.assertTrue(indexPage.isValid());
+        indexPage.navigateToTestPost();
+        postPage.isValid();
+        postPage.postComment();
+    }
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE resources PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Resource Definitions//EN"
+        "http://glassfish.org/dtds/glassfish-resources_1_5.dtd">
+<resources>
+    <jdbc-resource pool-name="FrenchPressPool" jndi-name="jdbc/frenchpress"></jdbc-resource>
+<!-- 
+    <jdbc-connection-pool driver-classname="org.postgresql.Driver"
+                          res-type="java.sql.Driver"
+                          name="FrenchPressPool">
+        <property name="PortNumber"     value="5432" />
+        <property name="Password"       value="fptest" />
+        <property name="User"           value="fptest" />
+        <property name="serverName"     value="localhost" />
+        <property name="databaseName"   value="fptest"/>
+        <property name="URL"            value="jdbc:postgresql://localhost/fptest" />
+    </jdbc-connection-pool>
+-->    
+    <!--
+    <jdbc-connection-pool driver-classname="org.apache.derby.jdbc.EmbeddedDriver"
+                          res-type="java.sql.Driver"
+                          name="FrenchPressPool">
+        <property name="PortNumber" value="9001" />
+        <property name="Password" value="" />
+        <property name="User" value="sa" />
+        <property name="serverName" value="localhost" />
+        <property name="URL" value="jdbc:derby:frenchpress;create=true" />
+    </jdbc-connection-pool>
+    -->
+    
+    <jdbc-connection-pool driver-classname="org.hsqldb.jdbc.JDBCDriver"
+                          res-type="java.sql.Driver"
+                          name="FrenchPressPool">
+        <!-- property name="PortNumber" value="9001" / -->
+        <property name="Password" value="sa" />
+        <property name="User" value="sa" />
+        <!-- property name="serverName" value="localhost" /-->
+        <property name="URL" value="jdbc:hsqldb:mem:fptest" />
+    </jdbc-connection-pool>
+    
+</resources>

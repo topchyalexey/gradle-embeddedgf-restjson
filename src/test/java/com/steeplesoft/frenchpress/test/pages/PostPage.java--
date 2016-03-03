@@ -1,0 +1,42 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package com.steeplesoft.frenchpress.test.pages;
+
+import static org.jboss.arquillian.graphene.Graphene.guardHttp;
+import org.jboss.arquillian.graphene.page.Location;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+/**
+ *
+ * @author jdlee
+ */
+@Location("test-post-1")
+public class PostPage {
+    @FindBy( id="commentForm:name")
+    private WebElement commentName;
+    @FindBy( id="commentForm:email")
+    private WebElement commentEmail;
+    @FindBy( id="commentForm:website")
+    private WebElement commentWebsite;
+    @FindBy( id="commentForm:comment")
+    private WebElement commentBody;
+    @FindBy( id="commentForm:button")
+    private WebElement commentButton;
+
+    public boolean isValid() {
+        return commentName != null;
+    }
+
+    public void postComment() {
+        commentName.sendKeys("Arquillian Test");
+        commentEmail.sendKeys("test@example.com");
+        commentWebsite.sendKeys("http://blogs.steeplesoft.com");
+        commentBody.sendKeys("Comment body");
+        guardHttp(commentButton).click();
+    }
+}

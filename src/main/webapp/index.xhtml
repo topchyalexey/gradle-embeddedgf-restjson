@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <head>
+        <title>Should Not Be Displayed</title>
+    </head>
+    <body>
+    <ui:composition id="composition" template="/themes/frenchpress/layout.xhtml">
+        <ui:define name="title">French Press</ui:define>
+        <ui:define name="content">
+            <h:panelGroup id="marker"/>
+            <ul class="column">
+            <ui:repeat id="blogsTable" value="#{postBean.getPosts(15)}" var="entry" varStatus="status">
+                    <li>
+                        <section class="block">
+                            <h2><a id="#{entry.slug}" href="#{request.contextPath}/#{entry.slug}" title="Permalink to #{entry.title}">#{entry.title}</a></h2>
+                            <p><h:outputText escape="false" value="#{entry.body}"/></p>
+                        </section>
+                    </li>
+            </ui:repeat>
+            </ul>
+        </ui:define>
+    </ui:composition>
+</body>
+</html>

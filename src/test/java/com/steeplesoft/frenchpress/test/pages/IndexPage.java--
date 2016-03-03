@@ -1,0 +1,36 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package com.steeplesoft.frenchpress.test.pages;
+
+import static org.jboss.arquillian.graphene.Graphene.guardHttp;
+import org.jboss.arquillian.graphene.page.Location;
+import org.junit.Assert;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+/**
+ *
+ * @author jdlee
+ */
+@Location("/")
+public class IndexPage {
+    @FindBy(id="intro")
+    private WebElement intro;
+
+    @FindBy(linkText = "Test Post #1")
+    private WebElement testPost1;
+
+    public void navigateToTestPost() {
+        guardHttp(testPost1).click();
+    }
+
+    public boolean isValid() {
+        Assert.assertNotNull(intro);
+        Assert.assertNotNull(testPost1);
+        return true;
+    }
+}
